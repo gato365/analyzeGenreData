@@ -10,7 +10,6 @@ output: html_document
 library(tidyverse)
 library(spotifyr)
 library(lubridate)
-
 access_token <- get_spotify_access_token()
 ```
 
@@ -55,7 +54,7 @@ music_df = bind_rows(country_df,hip_hop_df,jazz_df,rnb_df,pop_df) %>%
 gather_popular_songs = function(artist_id){
   
   if( artist_id != c('2PaZWGu5T5nHjY2xxAkFsT')){
-    Sys.sleep(2)
+    # Sys.sleep(2)
     ## Gather Song Data
     song_df = get_artist_top_tracks(id = artist_id) %>% 
       filter(popularity == max(popularity)) %>% 
@@ -68,9 +67,9 @@ gather_popular_songs = function(artist_id){
     ## Change Column Names
     colnames(artist_df) = c('artist_id','artist_name')
     
-    Sys.sleep(2)
+    # Sys.sleep(2)
     
-    cat(artist_df$artist_name, '\n')
+    
     ## Gather Characteristics about Songs
     track_char_df = get_artist_audio_features(artist = artist_df$artist_name) %>% 
       filter(track_id == song_df$id) %>% 
@@ -79,7 +78,7 @@ gather_popular_songs = function(artist_id){
              acousticness,instrumentalness,liveness,valence,tempo) %>% 
       filter(row_number() == 1)
     
-    
+    cat(artist_df$artist_name, '\n')
     
     ## Combine Data Fame Information
     final_df = bind_cols(song_df,artist_df,track_char_df)
@@ -93,8 +92,13 @@ gather_popular_songs = function(artist_id){
 ```{r}
 
 
-artist_ids = music_df$id
+artist_ids = music_df$id[-c(79,47)] ## Remove a song 
 df = map_df(artist_ids, gather_popular_songs)
 ```
 
+
+```{r}
+saveRDS(df, file="topArtistsSongs.RData")
+saveRDS(music_df, file="artists.RData")
+```
 
