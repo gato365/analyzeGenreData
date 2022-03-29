@@ -1,0 +1,91 @@
+---
+title: "Untitled"
+author: "Dr. Williams"
+date: "3/28/2022"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(lubridate)
+Sys.setenv(SPOTIFY_CLIENT_ID = '5586f74d77e44d0495071f72f0681d43')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'd7f48b3419c548d5b0fd38a1c24b31e3')
+access_token <- get_spotify_access_token()
+```
+
+
+## List of 100 Songs
+
+
+### Get 5 genres, 20 artists/songs per genre
+1. Country
+2. Hip Hop
+3. Jazz
+4. RnB
+5. Pop
+
+```{r}
+## Get Artists
+country_df = get_genre_artists(genre = 'country',limit = 25) %>% mutate()
+hip_hop_df = get_genre_artists(genre = 'hip-hop',limit = 25)
+jazz_df = get_genre_artists(genre = 'jazz',limit = 25)
+rnb_df = get_genre_artists(genre = 'r&b',limit = 25)
+pop_df = get_genre_artists(genre = 'pop',limit = 25)
+```
+
+
+```{r}
+## Bind 
+music_df = bind_rows(country_df,hip_hop_df,jazz_df,rnb_df,pop_df) %>% 
+  filter(duplicated(name) == FALSE)
+```
+
+
+
+```{r}
+
+
+artist_id = '4oUHIQIBe0LHzYfvXNW4QM'
+
+
+
+
+##----------------------------------
+## Name: gather_popular_songs
+## Purpose: gather artist information from various functions
+## Input: artist id
+## Output: gather characteristics of artists
+##----------------------------------
+gather_popular_songs = function(artist_id){
+  
+  ## Gather Song Data
+  song_df = get_artist_top_tracks(id = artist_id) %>% 
+    filter(popularity == max(popularity)) %>% 
+    arrange(album.release_date) %>% 
+    filter(row_number() == 1)
+  
+  ## Gather Song data
+  artist_df = song_df[[1]][[1]][,2:3]
+  
+  ## Change Column Names
+  colnames(artist_df) = c('artist_id','artist_name')
+  
+  
+  
+  ## Gather Characteristics about Songs
+  track_char_df = get_artist_audio_features(artist = artist_df$artist_name) %>% 
+    filter(track_id == song_df$id) %>% 
+    select(danceability,energy,loudness,speechiness,
+           acousticness,instrumentalness,liveness,valence,temp)
+  
+  
+  
+  ## Combine Data Fame Information
+  final_df = bind_cols(song_df,artist_df,track_char_d)
+}
+
+```
+
+
