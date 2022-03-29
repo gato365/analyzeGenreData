@@ -10,8 +10,7 @@ output: html_document
 library(tidyverse)
 library(spotifyr)
 library(lubridate)
-Sys.setenv(SPOTIFY_CLIENT_ID = '5586f74d77e44d0495071f72f0681d43')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'd7f48b3419c548d5b0fd38a1c24b31e3')
+
 access_token <- get_spotify_access_token()
 ```
 
@@ -47,11 +46,6 @@ music_df = bind_rows(country_df,hip_hop_df,jazz_df,rnb_df,pop_df) %>%
 ```{r}
 
 
-artist_id = '4oUHIQIBe0LHzYfvXNW4QM'
-
-
-
-
 ##----------------------------------
 ## Name: gather_popular_songs
 ## Purpose: gather artist information from various functions
@@ -60,34 +54,47 @@ artist_id = '4oUHIQIBe0LHzYfvXNW4QM'
 ##----------------------------------
 gather_popular_songs = function(artist_id){
   
-  ## Gather Song Data
-  song_df = get_artist_top_tracks(id = artist_id) %>% 
-    filter(popularity == max(popularity)) %>% 
-    arrange(album.release_date) %>% 
-    filter(row_number() == 1)
-  
-  ## Gather Song data
-  artist_df = song_df[[1]][[1]][,2:3]
-  
-  ## Change Column Names
-  colnames(artist_df) = c('artist_id','artist_name')
-  
-  
-  
-  ## Gather Characteristics about Songs
-  track_char_df = get_artist_audio_features(artist = artist_df$artist_name) %>% 
-    filter(track_id == song_df$id) %>% 
-    arrange(album_release_date) %>% 
-    select(danceability,energy,loudness,speechiness,
-           acousticness,instrumentalness,liveness,valence,tempo) %>% 
-    filter(row_number() == 1)
-  
-  
-  
-  ## Combine Data Fame Information
-  final_df = bind_cols(song_df,artist_df,track_char_df)
+  if( artist_id != c('2PaZWGu5T5nHjY2xxAkFsT')){
+    Sys.sleep(2)
+    ## Gather Song Data
+    song_df = get_artist_top_tracks(id = artist_id) %>% 
+      filter(popularity == max(popularity)) %>% 
+      arrange(album.release_date) %>% 
+      filter(row_number() == 1)
+    
+    ## Gather Song data
+    artist_df = song_df[[1]][[1]][1,2:3]
+    
+    ## Change Column Names
+    colnames(artist_df) = c('artist_id','artist_name')
+    
+    Sys.sleep(2)
+    
+    cat(artist_df$artist_name, '\n')
+    ## Gather Characteristics about Songs
+    track_char_df = get_artist_audio_features(artist = artist_df$artist_name) %>% 
+      filter(track_id == song_df$id) %>% 
+      arrange(album_release_date) %>% 
+      select(danceability,energy,loudness,speechiness,
+             acousticness,instrumentalness,liveness,valence,tempo) %>% 
+      filter(row_number() == 1)
+    
+    
+    
+    ## Combine Data Fame Information
+    final_df = bind_cols(song_df,artist_df,track_char_df)
+  }
 }
 
+```
+
+
+
+```{r}
+
+
+artist_ids = music_df$id
+df = map_df(artist_ids, gather_popular_songs)
 ```
 
 
