@@ -1,0 +1,19 @@
+---
+title: "Untitled"
+author: "Dr. Williams"
+date: "3/29/2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+
+
+```{r}
+artists_df = readRDS("artists.RData")
+songs_df = readRDS("topArtistsSongs.RData")
+```
+
