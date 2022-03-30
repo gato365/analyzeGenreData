@@ -8,6 +8,7 @@ output: html_document
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(corrplot)
+library(reshape2)
 ```
 
 
@@ -34,18 +35,34 @@ in_df = songs_df %>%
 
 ## All Genres
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+all_cor = in_df %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
-  corrplot()
+  cor() 
+  
+all_cor_df = all_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'all')
+  
+all_cor %>%   
+corrplot()
 ```
 
 ## Country Music
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+country_cor = in_df %>% 
   filter(genre == 'country') %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
+  cor()
+
+country_cor_df = country_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'country')
+
+
+
+country_cor %>% 
   corrplot()
 ```
 
@@ -60,10 +77,17 @@ in_df %>%
 
 ## Hip Hop Music
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+hiphop_cor = in_df %>% 
   filter(genre == 'hip-hop') %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
+  cor() 
+hiphop_cor_df = hiphop_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'hiphop')
+
+
+hiphop_cor %>% 
   corrplot()
 ```
 
@@ -73,29 +97,56 @@ in_df %>%
 
 ## Jazz Music
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+jazz_cor = in_df %>% 
   filter(genre == 'jazz') %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
+  cor() 
+jazz_cor_df = jazz_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'jazz')
+
+jazz_cor %>% 
   corrplot()
 ```
 
 
 ## Pop Music
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+pop_cor = in_df %>% 
   filter(genre == 'pop') %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
+  cor() 
+pop_cor_df = pop_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'pop')
+
+
+pop_cor %>% 
   corrplot()
 ```
 
 
 ## R n B Music
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-in_df %>% 
+rnb_cor  = in_df %>% 
   filter(genre == 'r&b') %>% 
   select(-artist_name,-genre) %>% 
-  cor() %>% 
+  cor() 
+
+
+rnb_cor_df = rnb_cor %>% 
+  melt() %>% 
+  # subset(abs(value)>.30) %>% 
+  mutate(genre = 'rnb')
+rnb_cor %>% 
   corrplot()
 ```
+
+
+
+```{r}
+genre_cor_df = bind_rows(country_cor_df,hiphop_cor_df,pop_cor_df,rnb_cor_df,jazz_cor_df)
+```
+
