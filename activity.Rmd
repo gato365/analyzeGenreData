@@ -1,0 +1,60 @@
+---
+title: "5 Popular"
+author: "Dr. Williams"
+date: "3/30/2022"
+output: html_document
+---
+
+
+1. Explain valence and energy
+2. Show an empty plot
+(Traditional R Shiny)
+(Questions in Google Survey)
+3. Develop questions based on characteristics of each artist
+4. Develop questions about different songs on a particular 
+
+
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(lubridate)
+access_token <- get_spotify_access_token()
+```
+
+http://www.rcharlie.net/sentify/
+
+Drake
+Kanye West
+Taylor Swift
+Carrie Underwood
+Ed Sheeran
+Adele
+
+```{r}
+song_df = get_artist_top_tracks(id = '06HL4z0CvFAxyc27GXpf02',include_meta_info = 'limit')
+
+## Get Tracks
+drake_df = get_artist_audio_features('Drake')
+kw_df = get_artist_audio_features('Kanye West')
+ts_df = get_artist_audio_features('Taylor Swift')
+cu_df = get_artist_audio_features('Carrie Underwood')
+es_df = get_artist_audio_features('Ed Sheeran')
+adele_df = get_artist_audio_features('Adele')
+```
+
+```{r}
+df = bind_rows(drake_df,kw_df,ts_df,cu_df,es_df,adele_df)
+```
+
+Plotly like on website
+```{r}
+df %>% 
+  filter(artist_name %in% c('Taylor Swift')) %>% 
+  ggplot(aes(x = energy, y = valence, color = artist_name)) +
+  geom_point() +
+  geom_vline(xintercept = 0.5,size = 1) +
+  geom_hline(yintercept = 0.5,size = 1) +
+  theme_bw()
+```
+
+

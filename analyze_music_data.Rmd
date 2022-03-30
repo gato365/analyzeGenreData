@@ -9,6 +9,7 @@ output: html_document
 library(tidyverse)
 library(corrplot)
 library(reshape2)
+library(data.table)
 ```
 
 
@@ -38,14 +39,14 @@ in_df = songs_df %>%
 all_cor = in_df %>% 
   select(-artist_name,-genre) %>% 
   cor() 
-  
+
 all_cor_df = all_cor %>% 
   melt() %>% 
   # subset(abs(value)>.30) %>% 
   mutate(genre = 'all')
-  
+
 all_cor %>%   
-corrplot()
+  corrplot()
 ```
 
 ## Country Music
@@ -155,6 +156,14 @@ genre_cor_df = bind_rows(country_cor_df,hiphop_cor_df,
 ```
 
 
+```{r}
+genre_cor_df %>% 
+  filter(Var1 == 'valence', abs(value) >0.5)  %>% 
+  arrange(Var2)
+```
+
+
+
 
 ```{r}
 combinations_df = genre_cor_df %>%  
@@ -162,6 +171,29 @@ combinations_df = genre_cor_df %>%
   summarise(size = n(),
             mean = mean(value, na.rm = TRUE),
             sd = sd(value, na.rm = TRUE)
-            )
+  )
+
+library(data.table)
+setDT(combinations_df)
+tmp_df = combinations_df[, .SD[which.max(mean)], keyby = sd]
 ```
 
+
+## View the pair that is most different between all 5 genres
+```{r}
+in_df %>% 
+  ggplot(aes(x = loudness, y = valence, color = genre)) +
+  geom_point() +
+  # facet_grid(.~ genre) +
+  theme_bw() 
+```
+
+## View the pair that is most different between all 5 genres
+```{r}
+in_df %>% 
+  filter(genre %in% c('pop','r&b'), duration_ms < 613026) %>% 
+  ggplot(aes(x = duration_ms, y = valence, color = genre)) +
+  geom_point() +
+  # facet_grid(.~ genre) +
+  theme_bw() 
+```
