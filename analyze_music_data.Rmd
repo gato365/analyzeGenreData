@@ -147,6 +147,21 @@ rnb_cor %>%
 
 
 ```{r}
-genre_cor_df = bind_rows(country_cor_df,hiphop_cor_df,pop_cor_df,rnb_cor_df,jazz_cor_df)
+## Method to determine which pair of correlations is most different from one another
+genre_cor_df = bind_rows(country_cor_df,hiphop_cor_df,
+                         pop_cor_df,rnb_cor_df,jazz_cor_df) %>% 
+  filter(Var1 != Var2) %>% 
+  mutate(comb_var = paste0(Var1,'-',Var2))
+```
+
+
+
+```{r}
+combinations_df = genre_cor_df %>%  
+  group_by(comb_var) %>% 
+  summarise(size = n(),
+            mean = mean(value, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE)
+            )
 ```
 
