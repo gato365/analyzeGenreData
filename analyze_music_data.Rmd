@@ -5,15 +5,97 @@ date: "3/29/2022"
 output: html_document
 ---
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(corrplot)
 ```
 
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 artists_df = readRDS("artists.RData")
 songs_df = readRDS("topArtistsSongs.RData")
 ```
 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+genre_df = artists_df %>% 
+  select(name, genre) %>% 
+  rename(artist_name = name)
+
+## Only Interested Variable
+in_df = songs_df %>% 
+  select("danceability","energy","loudness","speechiness","acousticness","instrumentalness","liveness","valence", "tempo","duration_ms","popularity","artist_name") %>% 
+  left_join(genre_df,by = 'artist_name')
+```
+
+
+
+## All Genres
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+## Country Music
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  filter(genre == 'country') %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+
+
+
+
+
+
+
+
+
+## Hip Hop Music
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  filter(genre == 'hip-hop') %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+
+
+
+
+## Jazz Music
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  filter(genre == 'jazz') %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+
+## Pop Music
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  filter(genre == 'pop') %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+
+## R n B Music
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+in_df %>% 
+  filter(genre == 'r&b') %>% 
+  select(-artist_name,-genre) %>% 
+  cor() %>% 
+  corrplot()
+```
