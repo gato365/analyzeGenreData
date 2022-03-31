@@ -14,6 +14,50 @@ output: html_document
 4. Develop questions about different songs on a particular 
 
 
+
+
+
+
+
+
+
+
+
+
+```{r}
+df = data.frame(x = c(0,0), y = c(0,0))
+df %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() + 
+  geom_vline(xintercept = 0.5,size = 1) +
+  geom_hline(yintercept = 0.5,size = 1) +
+  xlim(0,1) +
+  ylim(0,1) +
+  labs(x = 'Valence') +
+  labs( y = 'Energy') +
+  annotate("text", x=0.22, y=0.25, label= "Sad",size = 17.5, color = 'gray') +
+  annotate("text", x=0.75, y=0.25, label= "Chill",size = 17.5, color = 'gray') +
+  annotate("text", x=0.22, y=0.75, label= "Anger",size = 17.5, color = 'gray') +
+  annotate("text", x=0.75, y=0.75, label= "Happy",size = 17.5, color = 'gray') +
+  annotate("text", x=0.22, y=0.5, label= "Bad Feeling",size = 12.5, color = 'gray') +
+  annotate("text", x=0.77, y=0.5, label= "Good Feeling",size = 12.5, color = 'gray') +
+  theme_bw() +
+  theme(axis.title = element_text(size = 18))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 ```{r}
 library(tidyverse)
 library(spotifyr)
@@ -31,7 +75,6 @@ Ed Sheeran
 Adele
 
 ```{r}
-song_df = get_artist_top_tracks(id = '06HL4z0CvFAxyc27GXpf02',include_meta_info = 'limit')
 
 ## Get Tracks
 drake_df = get_artist_audio_features('Drake')
@@ -49,7 +92,7 @@ df = bind_rows(drake_df,kw_df,ts_df,cu_df,es_df,adele_df)
 Plotly like on website
 ```{r}
 df %>% 
-  filter(artist_name %in% c('Taylor Swift')) %>% 
+  filter(artist_name %in% c('Adele','Kanye West')) %>% 
   ggplot(aes(x = energy, y = valence, color = artist_name)) +
   geom_point() +
   geom_vline(xintercept = 0.5,size = 1) +
