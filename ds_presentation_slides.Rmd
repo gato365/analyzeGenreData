@@ -1,0 +1,155 @@
+---
+title: "What is Data Science?"
+author: "Dr. Williams"
+institute: "GATO365 Learning Center"
+date: "April 6, 2022"
+output:
+  xaringan::moon_reader:
+    # css: "pfs_css.css"
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+<!-- cChange font titles sizes -->
+
+<!-- <style type="text/css"> -->
+<!-- .remark-slide-content p, ul, ol, li { -->
+<!-- font-size: 19px; -->
+<!-- padding: 0.25em 0.25em 0.25em 0.25em; -->
+<!-- } -->
+<!-- .remark-slide-content  { -->
+<!-- font-size: 28px; -->
+<!-- padding: 0.5em 0.5em 0.5em 0.5em; -->
+<!-- } -->
+<!-- </style> -->
+
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+library(tidyverse)
+library(scales)
+mono_light(
+  base_color = "#3B4A68",
+  header_font_google = google_font("Comic Sans MS"),
+  text_font_google   = google_font("Comic Sans MS"),
+  code_font_google   = google_font("Comic Sans MS"),
+  background_image = 'logo2021_close.PNG',
+  background_size = '75px',
+  background_position = 'top 10px right 15px',
+  title_slide_background_image = "none"
+)
+```
+
+
+```{r echo=FALSE}
+df = data.frame(x = c(0,1), y = c(0,1))
+p1 = df %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_blank() +
+  geom_vline(xintercept = 0,size = 1) +
+  geom_hline(yintercept = 0.5,size = 1) +
+  scale_x_continuous(limits = c(-1,1), 
+                     expand = c(0, 0),
+                     labels = label_number(accuracy = 0.1)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0, 0))  +
+  theme_bw() +
+  theme(axis.title = element_text(size = 18, face = 'bold'))
+
+```
+
+
+## What is Valence?
+
+#### Valence measures the natural **attractiveness/goodness (positive valence)** or **aversiveness/badness (negative valence)** of an event, object, or situation. 
+
+--
+
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '500px'}
+p2 <- p1 +
+  labs(x = 'Valence') +
+  theme(axis.title.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 18, face = 'bold'),
+        plot.margin = margin(0.1, 0.5, 0.1, 0.5, "cm")
+  ) 
+p2
+```
+
+
+---
+
+## That Good Feeling
+
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '500px'}
+p3 <- p2 +
+  geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1),alpha = 0.2, fill = 'blue') +
+  annotate("text", x=0.5, y=0.5, label= "Good Feeling",size = 13, color = 'white') +
+  theme(legend.position = 'none')
+p3 
+```
+
+
+---
+
+## Bad Feelings
+
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '500px'}
+p3 +
+  geom_rect(aes(xmin=-1, xmax=0, ymin=0, ymax=1),alpha = 0.2, fill = 'red') +
+  annotate("text", x=-0.5, y=0.5, label= "Bad Feeling",size = 13, color = 'white') +
+  theme(legend.position = 'none')
+
+```
+
+---
+
+### Energy!
+
+
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '500px'}
+p4 <- p1 +
+  geom_rect(aes(xmin=-1, xmax=0, ymin=0, ymax=1),alpha = 0.2, fill = 'red') +
+  geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1),alpha = 0.2, fill = 'blue') +
+  labs(x = 'Valence',y='Energy') +
+  theme(axis.text = element_text(size = 12, face = 'bold'),
+        plot.margin = margin(0.3, 0.5, 0.1, 0.5, "cm")
+  )
+
+p4
+```
+
+
+---
+
+### Different Modes 
+There are 4 mood were are going to consider
+--
+
+### **Sad** |  **Chill** | **Anger** | **Happy**
+
+**Which quadrant should each mood be in?**
+
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '400px'}
+p4 +
+  annotate("text", x=-0.5, y=0.25, label= "1",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.25, label= "4",size = 15.5, color = 'white') +
+  annotate("text", x=-0.5, y=0.75, label= "2",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.75, label= "3",size = 15.5, color = 'white')
+```
+
+---
+
+### Answer
+```{r fig.align="center", echo = FALSE,fig.width = 8, out.width = '400px'}
+p4 +
+  annotate("text", x=-0.5, y=0.25, label= "Sad",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.25, label= "Chill",size = 15.5, color = 'white') +
+  annotate("text", x=-0.5, y=0.75, label= "Anger",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.75, label= "Happy",size = 15.5, color = 'white')
+```

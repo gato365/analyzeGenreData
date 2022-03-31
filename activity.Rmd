@@ -24,32 +24,6 @@ output: html_document
 
 
 
-```{r}
-df = data.frame(x = c(0,0), y = c(0,0))
-df %>% 
-  ggplot(aes(x = x, y = y)) +
-  geom_point() + 
-  geom_vline(xintercept = 0.5,size = 1) +
-  geom_hline(yintercept = 0.5,size = 1) +
-  xlim(0,1) +
-  ylim(0,1) +
-  labs(x = 'Valence') +
-  labs( y = 'Energy') +
-  annotate("text", x=0.22, y=0.25, label= "Sad",size = 17.5, color = 'gray') +
-  annotate("text", x=0.75, y=0.25, label= "Chill",size = 17.5, color = 'gray') +
-  annotate("text", x=0.22, y=0.75, label= "Anger",size = 17.5, color = 'gray') +
-  annotate("text", x=0.75, y=0.75, label= "Happy",size = 17.5, color = 'gray') +
-  annotate("text", x=0.22, y=0.5, label= "Bad Feeling",size = 12.5, color = 'gray') +
-  annotate("text", x=0.77, y=0.5, label= "Good Feeling",size = 12.5, color = 'gray') +
-  theme_bw() +
-  theme(axis.title = element_text(size = 18))
-
-
-```
-
-
-
-
 
 
 
@@ -74,19 +48,23 @@ Carrie Underwood
 Ed Sheeran
 Adele
 
+
+
+multiple VALENCE BY -2 when less than 0.5 and 2 when VALENCE is above or equal to 0.5
 ```{r}
 
 ## Get Tracks
-drake_df = get_artist_audio_features('Drake')
-kw_df = get_artist_audio_features('Kanye West')
-ts_df = get_artist_audio_features('Taylor Swift')
-cu_df = get_artist_audio_features('Carrie Underwood')
-es_df = get_artist_audio_features('Ed Sheeran')
-adele_df = get_artist_audio_features('Adele')
+cp_df = get_artist_audio_features('Coldplay')
+kl_df = get_artist_audio_features('Kendrick Lamar')
+pw_df = get_artist_audio_features('Pharrell Williams')
+be_df = get_artist_audio_features('Billie Ellish')
+
 ```
 
 ```{r}
-df = bind_rows(drake_df,kw_df,ts_df,cu_df,es_df,adele_df)
+df = bind_rows(cp_df,kl_df,pw_df,be_df)
+
+saveRDS(df, file="songsPresentation.RData")
 ```
 
 Plotly like on website
@@ -99,5 +77,40 @@ df %>%
   geom_hline(yintercept = 0.5,size = 1) +
   theme_bw()
 ```
+
+
+
+```{r}
+df = data.frame(x = c(0,0), y = c(0,0))
+p1 = df %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() + 
+  geom_vline(xintercept = 0.5,size = 1) +
+  geom_hline(yintercept = 0.5,size = 1) + 
+  scale_x_continuous(limits = c(0,1), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0, 0))  +
+  theme_bw() 
+  
+  geom_rect(aes(xmin=0.5, xmax=1, ymin=0, ymax=1,alpha = 0.2), fill = 'blue') +
+  geom_rect(aes(xmin=0, xmax=0.5, ymin=0, ymax=1,alpha = 0.2), fill = 'red') +
+ 
+    
+    
+  labs(x = 'Valence') +
+  labs( y = 'Energy') +
+  annotate("text", x=0.22, y=0.25, label= "Sad",size = 17.5, color = 'gray') +
+  annotate("text", x=0.75, y=0.25, label= "Chill",size = 17.5, color = 'gray') +
+  annotate("text", x=0.22, y=0.75, label= "Anger",size = 17.5, color = 'gray') +
+  annotate("text", x=0.75, y=0.75, label= "Happy",size = 17.5, color = 'gray') +
+  annotate("text", x=0.22, y=0.5, label= "Bad Feeling",size = 10.5, color = 'gray') +
+  annotate("text", x=0.77, y=0.5, label= "Good Feeling",size = 10.5, color = 'gray') +
+  
+  theme(axis.title = element_text(size = 18))
+
+
+```
+
+
+
 
 
