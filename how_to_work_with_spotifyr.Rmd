@@ -25,6 +25,7 @@ install.packages('spotifyr')
 library(tidyverse)
 library(spotifyr)
 library(lubridate)
+library(kableExtra)
 Sys.setenv(SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 Sys.setenv(SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 access_token <- get_spotify_access_token()
@@ -86,14 +87,18 @@ There are some songs that are duplicated and there are many reasons why this can
 ```{r}
 kanye_west_df %>% 
   filter(track_name == 'Jesus Walks') %>% 
-  select(track_name,explicit)
+  select(track_name,explicit) %>% 
+  kable() %>% 
+  kable_styling(position = 'center')
 ```
 
 - different versions of the same song because some countries wont allow certain versions of a song 
 ```{r}
 kanye_west_df %>% 
   filter(track_name == 'Addiction') %>% 
-  select(track_name,explicit,available_markets)
+  select(track_name,explicit,available_markets)%>% 
+  kable() %>% 
+  kable_styling(position = 'center')
 ```
 
 
@@ -101,14 +106,27 @@ You can just arbitrarily remove variables based on the track name using the *dis
 ```{r}
 kw_df = kanye_west_df %>% 
   distinct(track_name, .keep_all = TRUE) ## keep_all, keeps all variable
+
+kw_df %>% 
+  filter(str_detect(track_name,'All Of The Lights' )) %>% 
+  select(track_name) %>% 
+  kable() %>% 
+  kable_styling(position = 'center')
 ```
 
 
 
-We are going to explore old Kanye's Top 21 hits from this top 40 list from this  [post](https://www.highsnobiety.com/p/best-kanye-west-songs/). I do not nescarily agree with this list but we will analyze it anyway.
+We are going to explore old Kanye's Top 21 hits from this top 40 list from this  [post](https://www.highsnobiety.com/p/best-kanye-west-songs/). I do not necessarily agree with this list but we will analyze it anyway.
 
 
 ```{r}
-'All of the Lights',
+top21_kw_df = data.frame(order = 21:1, songs = c('All of the Lights',
+'Diamonds From Sierra Leone','Ultralight Beam','All Falls Down',
+'New Slaves','Monster','Black Skinhead',
+'Slow Jamz','POWER','Touch the Sky',
+'Niggas in Paris','Can\'t Tell Me Nothing','Stronger',
+'Heartless','Devil in a New Dress','Through the Wire',
+'Gold Digger','Blood on the Leaves','Jesus Walks',
+'Flashing Lights','Runaway'))
 ```
 
