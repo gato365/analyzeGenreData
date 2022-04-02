@@ -8,6 +8,8 @@
 #
 
 library(shiny)
+library(plotly)
+
 setwd("G:/My Drive/03_research_and_development/04_emans_projects/02_fun_projects/project_52_spotify_music_data/analyzeGenreData")
 artists_df = readRDS("songsPresentation.RData")
 artists_names = unique(artists_df$artist_name)
@@ -25,14 +27,33 @@ p1 = df %>%
     scale_y_continuous(limits = c(0,1), expand = c(0, 0))  +
     theme_bw() +
     theme(axis.title = element_text(size = 18, face = 'bold')) +
-    geom_rect(aes(xmin=-1, xmax=0, ymin=0, ymax=1),alpha = 0.05, fill = 'red') +
-    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1),alpha = 0.05, fill = 'blue') +
+    geom_rect(aes(xmin=-1, xmax=0, ymin=0, ymax=1),alpha = 0.15, fill = 'red') +
+    geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1),alpha = 0.15, fill = 'blue') +
     labs(x = 'Valence',y='Energy') +
     theme(axis.text = element_text(size = 12, face = 'bold'),
           plot.margin = margin(0.3, 0.5, 0.1, 0.5, "cm")
     )
 
-
+neon_colors <- c(
+    '#84DE02'
+    , '#FF4466'
+    , '#4BC7CF'
+    , '#FF85CF'
+    , '#FFDF46'
+    , '#391285'
+    , '#E88E5A'
+    , '#DDE26A'
+    , '#C53151'
+    , '#B05C52'
+    , '#FD5240'
+    , '#FF4681'
+    , '#FF6D3A'
+    , '#FF404C'
+    , '#A0E6FF'
+    ,"#999999" 
+    ,"#E69F00" 
+    ,"#56B4E9"
+)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -60,7 +81,12 @@ shinyServer(function(input, output) {
             filter(artist_name == inform$artist_name) %>% 
             mutate(m1_valence = 2*valence - 1) 
         p2 <- p1 +
-            geom_point(data = tmp_df,aes(x =m1_valence  , y = energy, color = album_name)) 
+            geom_point(data = tmp_df,aes(x =m1_valence  , y = energy, color = album_name),size = 2.1) +
+            scale_color_manual(values=neon_colors) +
+            theme(legend.position = 'bottom')
+        
+        # p3 <- ggplotly(p2, tooltip = "text") %>% partial_bundle()
+        
         if(inform$showMoods == FALSE){        
             p2
         } else{
