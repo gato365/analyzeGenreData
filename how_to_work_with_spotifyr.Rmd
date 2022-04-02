@@ -1,0 +1,114 @@
+---
+title: "How To"
+author: "Dr. Williams"
+date: "4/2/2022"
+output: html_document
+---
+
+
+
+
+
+
+**Step 1:** Go [here](https://developer.spotify.com/dashboard/login) to find your ID and SECRET. You will have to log in using your Spotify information. Remember do save this information in the cloud, store on your laptop
+
+**Step 2:** Install spotifyr by running the following code:
+
+```{r eval=FALSE}
+install.packages('spotifyr')
+```
+
+
+**Step 3:** You will have to run this with your ID and SECRET
+
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(lubridate)
+Sys.setenv(SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+access_token <- get_spotify_access_token()
+```
+
+
+
+There are many things that you can do with *spotifyr*. I will provide a few 
+examples but if you want more information go to the following [website](https://www.rdocumentation.org/packages/spotifyr/versions/2.1.1), look through page as well as towards the bottom that explains all the functions you now have access to.
+
+
+## What can be done?
+My next 3 posts of will be using these functions from *spotifyr* so that you all can have some ideas about potential hurdles.
+
+
+### 1. Explore an artist
+I love Old Kanye West and I try to understand New "Ye". So lets look at (analyze) his songs using the **get_artist_audio_features()** function.
+
+```{r}
+kanye_west_df <- get_artist_audio_features('kanye west') 
+```
+It takes a while because he has a lot of songs!
+
+There are 39 variables that include various songs metrics such as:
+
+- danceability 
+- energy
+- key
+- loudness
+- mode
+- speechiness
+- acousticness
+- instrumentalness             
+- liveness 
+- valence
+- tempo
+
+Spotify has various ways of measuring some of these variables and this [website](https://www.theverge.com/tldr/2018/2/5/16974194/spotify-recommendation-algorithm-playlist-hack-nelson) does a decent job of explaining these variables.
+
+There are other variables that identify the song and album, you can spend 
+sometime using this information to understand some of your artists. 
+
+Other important variables include:
+
+- duration_ms: duration in milliseconds
+- explicit: TRUE or FALSE if there explicit language (a good variable to look into)
+- album_release_date and album_release_year: when songs are released to the public
+- track_name: the most important, is the name of the song
+
+There are other worthwhile variables to look into but these stick out the most to me. 
+
+
+## One thing to note (important)
+
+There are some songs that are duplicated and there are many reasons why this can happen. One reason relates to various artists, according to the [community page](https://community.spotify.com/t5/iOS-iPhone-iPad/Duplicates-of-the-same-albums/td-p/4542505) for Spotify, there seems to be an issue with artists reloading their music. Other reasons are include:
+
+- two versions of a song can occur because one version is clean and the other is explicit
+
+```{r}
+kanye_west_df %>% 
+  filter(track_name == 'Jesus Walks') %>% 
+  select(track_name,explicit)
+```
+
+- different versions of the same song because some countries wont allow certain versions of a song 
+```{r}
+kanye_west_df %>% 
+  filter(track_name == 'Addiction') %>% 
+  select(track_name,explicit,available_markets)
+```
+
+
+You can just arbitrarily remove variables based on the track name using the *distinct()* function but duplicates can still occur.
+```{r}
+kw_df = kanye_west_df %>% 
+  distinct(track_name, .keep_all = TRUE) ## keep_all, keeps all variable
+```
+
+
+
+We are going to explore old Kanye's Top 21 hits from this top 40 list from this  [post](https://www.highsnobiety.com/p/best-kanye-west-songs/). I do not nescarily agree with this list but we will analyze it anyway.
+
+
+```{r}
+'All of the Lights',
+```
+
