@@ -25,6 +25,7 @@ install.packages('spotifyr')
 library(tidyverse)
 library(spotifyr)
 library(lubridate)
+library(scales)
 library(kableExtra)
 Sys.setenv(SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 Sys.setenv(SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
@@ -96,9 +97,7 @@ kanye_west_df %>%
 ```{r}
 kanye_west_df %>% 
   filter(track_name == 'Addiction') %>% 
-  select(track_name,explicit,available_markets)%>% 
-  kable() %>% 
-  kable_styling(position = 'center')
+  select(track_name,explicit,available_markets)
 ```
 
 
@@ -120,32 +119,74 @@ We are going to explore old Kanye's Top 21 hits from this top 40 list from this 
 
 
 ```{r}
-top21_kw_df = data.frame(order = 21:1, songs = c('All Of The Lights',
-'Diamonds From Sierra Leone','Ultralight Beam','All Falls Down',
-'New Slaves','Monster','Black Skinhead',
-'Slow Jamz','POWER','Touch The Sky',
-'Ni**as In Paris','Can\'t Tell Me Nothing','Stronger',
-'Heartless','Devil In A New Dress','Through The Wire',
-'Gold Digger','Blood On The Leaves','Jesus Walks',
-'Flashing Lights','Runaway'))
+top_21_songs = c('All Of The Lights',
+                 'Diamonds From Sierra Leone','Ultralight Beam','All Falls Down',
+                 'New Slaves','Monster','Black Skinhead',
+                 'Slow Jamz','POWER','Touch The Sky',
+                 'Ni**as In Paris','Can\'t Tell Me Nothing','Stronger',
+                 'Heartless','Devil In A New Dress','Through The Wire',
+                 'Gold Digger','Blood On The Leaves','Jesus Walks',
+                 'Flashing Lights','Runaway')
 ```
 
 ## Time to clean
 
 ```{r}
 kw_songs_df = kanye_west_df %>% 
-  filter(track_name %in% top21_kw_df$songs)
+  filter(track_name %in% top_21_songs) 
 ```
 
 There are still duplicates!!!!!
 
-Lets keep the explicit ones...
 
-Please notice how I did not use filter, I used distinct because I want to make sure I get the songs that may not be duplicated but are not explicit
+
+Please notice how I did not use filter, I used distinct because it will extract the first version (row) of a track with the same name. This is problematic if I wanted a specific version of a song, i.e., only explicit song, but this is a simple blog posts. I also scaled valence so that it makes sense in that negative valence values are negative and postive valence values are positive. This variable is called *m1_valence*.
 ```{r}
 mod_kw_songs_df = kw_songs_df %>% 
-  filter(explicit == TRUE)
+  distinct(track_name, .keep_all= TRUE) %>% 
+  mutate(m1_valence = 2*valence - 1)
+```
+
+
+We can look at energey and valence of the songs but I label the axes based on the mood
+```{r}
+df = data.frame(x = c(0,1), y = c(0,1))
+p1 = df %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_blank() +
+  geom_vline(xintercept = 0,size = 1) +
+  geom_hline(yintercept = 0.5,size = 1) +
+  scale_x_continuous(limits = c(-1,1), 
+                     expand = c(0, 0),
+                     labels = label_number(accuracy = 0.1)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0, 0))  +
+  theme_bw() +
+  theme(axis.title = element_text(size = 18, face = 'bold')) +
+  geom_rect(aes(xmin=-1, xmax=0, ymin=0, ymax=1),alpha = 0.15, fill = 'red') +
+  geom_rect(aes(xmin=0, xmax=1, ymin=0, ymax=1),alpha = 0.15, fill = 'blue') +
+  labs(x = 'Valence',y='Energy') +
+  theme(axis.text = element_text(size = 12, face = 'bold'),
+        plot.margin = margin(0.3, 0.5, 0.1, 0.5, "cm")
+  ) +
+  annotate("text", x=-0.5, y=0.25, label= "Sad",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.25, label= "Chill",size = 15.5, color = 'white') +
+  annotate("text", x=-0.5, y=0.75, label= "Anger",size = 15.5, color = 'white') +
+  annotate("text", x=0.55, y=0.75, label= "Happy",size = 15.5, color = 'white')
+
+p1
 ```
 
 
 
+Lets look at these songs with these moods:
+```{r}
+p1 +
+  geom_point(data = mod_kw_songs_df,aes(x = m1_valence  , y = energy),size = 2.1) + 
+  theme(legend.position = 'bottom')
+```
+
+
+
+I guess he was still angry and some and less sad and chill...
+
+Why don't you find how 'Ye' compares.
