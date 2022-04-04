@@ -6,12 +6,148 @@ output: html_document
 ---
 
 
+Step 1: Go [here](https://developer.spotify.com/dashboard/login) to find your ID and SECRET. You will have to log in using your Spotify information. Remember do save this information in the cloud, store on your laptop
+
+Step 2: Install spotifyr by running the following code:
+
+```{r eval=FALSE}
+install.packages('spotifyr')
+```
+
+
+Step 3: You will have to run this with your ID and SECRET
+
 ```{r}
 library(tidyverse)
 library(spotifyr)
 library(lubridate)
+Sys.setenv(SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 access_token <- get_spotify_access_token()
 ```
+
+
+
+There are many things that you can do with *spotifyr*. I will provide a few 
+examples but if you want more information go to the following [website](https://www.rdocumentation.org/packages/spotifyr/versions/2.1.1), look through page as well as towards the bottom that explains all the functions you now have access to.
+
+
+## 3 examples of Using this function
+
+### 1. Explore an artist
+I love Old Kanye West and I try to understand New "Ye". So lets look (analyze) at all of his songs.
+
+```{r}
+kanye_west_df <- get_artist_audio_features('kanye west') 
+
+kd = kanye_west_df%>% distinct(track_name, .keep_all= TRUE)
+```
+It takes a while because he has a lot of songs!
+
+There are 39 variables that include various songs metrics such as:
+
+- danceability, 
+- energy
+- key
+- loudness
+- mode
+- speechiness
+- acousticness
+- instrumentalness             
+- liveness 
+- valence
+- tempo
+
+Spotify has various ways of measuring some of these variables and this [website](https://www.theverge.com/tldr/2018/2/5/16974194/spotify-recommendation-algorithm-playlist-hack-nelson) does a decent job of explaining this variables.
+
+There are other variables that identify the song and album. You can spend 
+sometime using this information to understand some of your artists. 
+
+Other important variables include
+
+- duration_ms: duration in milliseconds
+- explicit: TRUE or FALSE if there explicit language (a good variable to look into)
+- album_release_date and album_release_year: can used to know when some songs were released to the public
+- track_name: the most important, is the name of the song
+
+There are other worthwhile variables to look into but these stick out the most to me. 
+
+
+One thing to note: There are some songs that are duplicated. There are many reasons for why there are duplicated songs. A reason relates to various artists, according to the [community page](https://community.spotify.com/t5/iOS-iPhone-iPad/Duplicates-of-the-same-albums/td-p/4542505) for Spotify, there seems to be an issue with artist reloading their music. Other reasons for duplicates include different versions of a song, for example, clean vs explicit, or different versions of the same song.
+
+```{r}
+kanye_west_df %>% 
+  filter(track_name == 'Jesus Walks') %>% 
+  select(track_name,explicit)
+```
+
+```{r}
+
+
+kanye_west_df %>% 
+  filter(track_name == 'Addiction') %>% 
+  select(track_name,explicit,available_markets)
+```
+This last  example is an issue with where certain songs can be produced. This post will not spend time on this. 
+
+
+We are going to explore old Kanye Top 20 hits from this [post](https://www.highsnobiety.com/p/best-kanye-west-songs/). I do not nescarily agree with this list but we will analyze it anyway.
+
+
+“Diamonds From Sierra Leone”
+
+
+```{r}
+cd_df = kanye_west_df %>% 
+  filter(album_name == 'The College Dropout')
+```
+
+
+
+The only big difference I notice is that the key names are some other metrics. We are going to randomly select a row and 
+
+
+So now lets analyze!
+
+
+*Vague Question:* Has the number of explicit tracks change over time?
+*More Precise Question:* Has the number of explicit tracks relative to number of song produce in by year change over time?
+```{r}
+num_explict_songs_df = kanye_west_df %>% 
+  group_by(album_release_year) %>% 
+  summarise(number_explict = sum(explicit))
+num_explict_songs_df
+```
+
+
+
+
+
+
+### 2. Explore a genre
+
+```{r}
+get_genre_artists(genre = 'country',limit = 25)
+```
+
+
+### 3. Example exploring your profile
+
+```{r}
+get_my_top_artists_or_tracks()
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## List of 100 Songs

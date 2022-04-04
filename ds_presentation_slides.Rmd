@@ -1,5 +1,5 @@
 ---
-title: "What is Data Science?"
+title: "Using Spotify to learn about Data Science"
 author: "Dr. Williams"
 institute: "GATO365 Learning Center"
 date: "April 6, 2022"
@@ -44,16 +44,31 @@ mono_light(
 )
 ```
 
-## How I went above the odds?
+## What do I do?
 
-#### I am currently a data scientist that analyzes how students learn (make it sound appeasing)
+### I am currently a <span style="color: red;">data scientist</span> that creates learning experiences to enhance students' <span style="color: red;">ability and passion</span> for data science and statistics 
+
+--
+## <span style="color: red;">How did I get here? When I: </span>
+--
+
+#### - Failed my senior high school math class
+#### - Got into 1 out of 10 undergraduate institutions 
+#### - Got into 0 out of 10 graduate programs
+
+---
+
+## I need to go above the odds everyday... 
 
 --
 
-#### - Undergraduate
-#### - Graduate School
-#### - Current Job
+### - I could not take <span style="color: red;">no</span> for an answer...
+### - I had to stay <span style="color: red;">focused</span>...
+### - I need to find my <span style="color: red;">passion</span> and stick to it
 
+--
+
+## GATO365
 ---
 
 ### So what can I do with data science?
